@@ -1,0 +1,93 @@
+Certainly! Let's break down each step in the code after creating the `combined_df` DataFrame:
+
+### 1. Create an AnnData object
+
+```python
+adata = sc.AnnData(X=combined_df.T, obs=metadata)
+```
+
+- **Explanation**: 
+  - `sc.AnnData` is a data structure provided by Scanpy for storing and manipulating single-cell data.
+  - `X=combined_df.T`: Here, `X` represents the data matrix (`combined_df.T` transposes the DataFrame `combined_df` so that each row corresponds to a sample and each column corresponds to a gene).
+  - `obs=metadata`: `obs` (observations) is used to store metadata associated with each sample. `metadata` is a DataFrame where each row corresponds to a sample and columns provide additional information (e.g., `Condition` in this case).
+
+### 2. Normalize the data
+
+```python
+sc.pp.normalize_total(adata, target_sum=1e4)
+```
+
+- **Explanation**: 
+  - `sc.pp.normalize_total` is a Scanpy function used to normalize counts across samples. 
+  - `adata` is the AnnData object containing the expression data (`X` matrix).
+  - `target_sum=1e4`: Specifies the target sum for normalization. Here, it normalizes total counts to 10,000 (1e4).
+
+### 3. Log transform the data
+
+```python
+sc.pp.log1p(adata)
+```
+
+- **Explanation**: 
+  - `sc.pp.log1p` is another Scanpy function used to log-transform the data.
+  - `adata`: Again, the AnnData object containing the expression data (`X` matrix).
+  - This function applies a natural logarithm (`log1p`) to the data matrix `X`. Log transformation is commonly used to stabilize variance across genes.
+
+### 4. Perform differential expression analysis
+
+```python
+sc.tl.rank_genes_groups(adata, 'Condition', method='wilcoxon')
+```
+
+- **Explanation**: 
+  - `sc.tl.rank_genes_groups` is a Scanpy function used to perform differential expression analysis.
+  - `adata`: The AnnData object containing the expression data (`X` matrix).
+  - `'Condition'`: Specifies the column name in `adata.obs` that contains the sample conditions for comparison.
+  - `method='wilcoxon'`: Specifies the statistical test method to use for differential expression analysis. Here, it uses the Wilcoxon rank-sum test.
+
+### 5. Retrieve and format the results
+
+```python
+de_results = adata.uns['rank_genes_groups']
+```
+
+- **Explanation**: 
+  - `adata.uns['rank_genes_groups']` retrieves the results of the differential expression analysis stored in the `uns` attribute of `adata`.
+  - `de_results` is a dictionary containing the results, including gene names (`'names'`), log fold changes (`'logfoldchanges'`), p-values (`'pvals'`), etc.
+
+### 6. Extract and format the results
+
+```python
+group_name = de_results['names'].dtype.names[0]
+result_df = pd.DataFrame({
+    'names': de_results['names'][group_name],
+    'logfoldchanges': de_results['logfoldchanges'][group_name],
+    'pvals': de_results['pvals'][group_name],
+})
+```
+
+- **Explanation**: 
+  - `group_name = de_results['names'].dtype.names[0]`: Extracts the name of the group (e.g., `'0'`) from the `de_results` dictionary. In Scanpy, differential expression results are often stored as structured arrays.
+  - `result_df`: Constructs a pandas DataFrame (`result_df`) to store the differential expression results.
+  - Columns in `result_df` include gene names (`'names'`), log fold changes (`'logfoldchanges'`), and p-values (`'pvals'`) for the first group.
+
+### 7. Print and Save the results
+
+```python
+print(result_df.head())
+result_df.to_csv('differential_expression_results.csv', index=False)
+```
+
+- **Explanation**: 
+  - `print(result_df.head())`: Prints the top rows of `result_df` to inspect the differential expression results.
+  - `result_df.to_csv('differential_expression_results.csv', index=False)`: Saves `result_df` as a CSV file named `differential_expression_results.csv`. `index=False` ensures that the row index is not saved to the file.
+
+### Summary
+
+- The code provided performs differential expression analysis using Scanpy.
+- It starts by creating an AnnData object to hold the expression data and metadata.
+- Normalization and log transformation are applied to the data.
+- Differential expression analysis is performed using the Wilcoxon rank-sum test.
+- Results are retrieved, formatted into a DataFrame, printed, and saved as a CSV file.
+
+This workflow is typical for analyzing single-cell RNA-seq data using Scanpy, providing insights into genes that are differentially expressed between conditions (e.g., Control vs. Treatment).
