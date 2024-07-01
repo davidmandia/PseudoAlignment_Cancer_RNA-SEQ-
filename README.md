@@ -13,6 +13,10 @@ conda activate kallisto_env
 wget ftp://ftp.ensembl.org/pub/release-104/fasta/homo_sapiens/cdna/Homo_sapiens.GRCh38.cdna.all.fa.gz
 gunzip Homo_sapiens.GRCh38.cdna.all.fa.gz
 
+wget https://ftp.ensembl.org/pub/release-112/gtf/homo_sapiens/Homo_sapiens.GRCh38.112.gtf.gz
+gunzip Homo_sapiens.GRCh38.112.gtf.gz
+
+kallisto index -i transcriptome.idx --gtf gene_annotation.gtf transcripts.fasta
 
 kallisto index -i human_index.idx Homo_sapiens.GRCh38.cdna.all.fa
 
