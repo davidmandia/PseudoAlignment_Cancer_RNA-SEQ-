@@ -1,21 +1,20 @@
-
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
-
+import json
 
 OUTPUT_DIR = "kallisto_output_combined"
 
-
 # Function to parse Kallisto output and gather metrics
 def parse_kallisto_output(output_dir):
-    abundance_file = os.path.join(output_dir, "abundance.tsv")
-    df = pd.read_csv(abundance_file, sep='\t')
-    mapping_rate = (df['est_counts'] > 0).sum() / len(df) * 100
+    run_info_file = os.path.join(output_dir, "run_info.json")
+    with open(run_info_file, 'r') as f:
+        run_info = json.load(f)
+    mapping_rate = (run_info['n_pseudoaligned'] / run_info['n_processed']) * 100
     return {
         'Mapping Rate (%)': mapping_rate,
-        'Mean Fragment Length': 200,  # Replace with actual values if available
-        'Standard Deviation': 20     # Replace with actual values if available
+        'Mean Fragment Length': run_info.get('mean_fragment_length', 'NA'),
+        'Standard Deviation': run_info.get('sd_fragment_length', 'NA')
     }
 
 # Define sample names
@@ -23,7 +22,6 @@ sample_names = ["SRR5458657", "SRR5458658", "SRR5458661", "SRR5458662"]
 
 # Create a DataFrame to store metrics
 metrics = pd.DataFrame(columns=['Sample', 'Mapping Rate (%)', 'Mean Fragment Length', 'Standard Deviation'])
-
 
 # Populate DataFrame with metrics
 for sample_name in sample_names:
