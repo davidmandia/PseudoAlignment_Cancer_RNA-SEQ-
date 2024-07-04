@@ -1,0 +1,13 @@
+{
+	"n_targets": 199240,
+	"n_bootstraps": 0,
+	"n_processed": 15575945,
+	"n_pseudoaligned": 14222582,
+	"n_unique": 2230112,
+	"p_pseudoaligned": 91.3,
+	"p_unique": 14.3,
+	"kallisto_version": "0.46.1",
+	"index_version": 10,
+	"start_time": "Sun Jun 30 12:02:06 2024",
+	"call": "kallisto quant -i human_index.idx -o SRR5458662 --single -l 200 -s 20 SRR5458662.fastq.gz"
+}
