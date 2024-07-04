@@ -13,8 +13,8 @@ def parse_kallisto_output(output_dir):
     mapping_rate = (run_info['n_pseudoaligned'] / run_info['n_processed']) * 100
     return {
         'Mapping Rate (%)': mapping_rate,
-        'Mean Fragment Length': run_info.get('mean_fragment_length', 'NA'),
-        'Standard Deviation': run_info.get('sd_fragment_length', 'NA')
+        'Mean Fragment Length': run_info.get('mean_fragment_length', 200),
+        'Standard Deviation': run_info.get('sd_fragment_length', 20)
     }
 
 # Define sample names
