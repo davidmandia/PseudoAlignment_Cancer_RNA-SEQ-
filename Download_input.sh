@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Create a directory to store the input FASTQ files if it doesn't exist
+mkdir -p input_fastq
+
 # Define URLs for the FASTQ files
 URLS=(
     "ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR545/007/SRR5458657/SRR5458657.fastq.gz"
@@ -14,12 +17,12 @@ do
     # Extract the filename from the URL
     FILENAME=$(basename "$URL")
     
-    # Check if the file already exists in the current directory
-    if [ ! -f "$FILENAME" ]; then
+    # Check if the file already exists in the input_fastq directory
+    if [ ! -f "input_fastq/$FILENAME" ]; then
         echo "Downloading data from $URL..."
-        wget -nc "$URL"
+        wget -nc "$URL" -P input_fastq/
     else
-        echo "File $FILENAME already exists. Skipping download."
+        echo "File $FILENAME already exists in input_fastq directory. Skipping download."
     fi
 done
 
